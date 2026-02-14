@@ -10,7 +10,7 @@
     </parent>
     <groupId>pl.gatomek.flightradar.radar</groupId>
     <artifactId>radar</artifactId>
-    <version>1.1.0</version>
+    <version>1.0.0</version>
     <name>radar</name>
     <description>radar</description>
     <properties>
