@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.gatomek.flightradar.radar.client.RadarClient;
+import pl.gatomek.flightradar.radar.config.RadarConfig;
 import pl.gatomek.flightradar.radar.model.AircraftFile;
 
 import java.util.Optional;
@@ -14,22 +15,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 class QueryService implements QueryServicePort {
-
+    private final RadarConfig radarConfig;
     private final RadarClient radarClient;
-    private static final double LAT = 52.162;
-    private static final double LON = 20.960;
-    private static final int RANGE = 250;
 
     @Override
     public void query() {
+        float lat = radarConfig.getLat();
+        float lon = radarConfig.getLon();
+        int range = radarConfig.getRange();
+
         try {
-            ResponseEntity<AircraftFile> radarData = radarClient.getRadarData(LAT, LON, RANGE);
+            ResponseEntity<AircraftFile> radarData = radarClient.getRadarData(lat, lon, range);
             log.info("status:{} | lat:{} | lon:{} | range:{} | n:{}",
                     radarData.getStatusCode(),
-                    LAT, LON, RANGE,
+                    radarConfig.getLat(), radarConfig.getLon(), radarConfig.getRange(),
                     Optional.ofNullable(radarData.getBody()).map(AircraftFile::getTotal).orElse(-1));
         } catch (FeignException ex) {
-            log.error("HTTP Status: {}\nMessage: {} ", ex.status(), ex.getMessage());
+            log.error("HTTP Status: {}\nMessage: {} ", ex.status(), ex.getMessage(), ex);
         }
     }
 }

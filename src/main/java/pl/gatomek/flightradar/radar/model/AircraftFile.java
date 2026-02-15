@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AircraftFile {
-    Integer total;
+    private Integer total;
 }

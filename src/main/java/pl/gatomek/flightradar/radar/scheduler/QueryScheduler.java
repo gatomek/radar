@@ -11,7 +11,7 @@ import pl.gatomek.flightradar.radar.service.QueryServicePort;
 public class QueryScheduler {
     private final QueryServicePort queryServicePort;
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "${query.scheduler.cron}")
     public void query() {
         queryServicePort.query();
     }

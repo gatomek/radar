@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import pl.gatomek.flightradar.radar.model.AircraftFile;
 
-@FeignClient(name = "radar", url = "https://api.airplanes.live")
+@FeignClient(name = "radar", url = "${radar.url}")
 public interface RadarClient {
 
     @GetMapping("/v2/point/{lat}/{lon}/{range}")
