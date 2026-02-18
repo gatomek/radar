@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.gatomek.flightradar.radar.client.RadarClient;
 import pl.gatomek.flightradar.radar.config.RadarConfig;
-import pl.gatomek.flightradar.radar.model.AircraftFile;
 
 import java.util.Optional;
 
@@ -25,11 +24,11 @@ class QueryService implements QueryServicePort {
         int range = radarConfig.getRange();
 
         try {
-            ResponseEntity<AircraftFile> radarData = radarClient.getRadarData(lat, lon, range);
+            ResponseEntity<String> radarData = radarClient.getRadarData(lat, lon, range);
             log.info("status:{} | lat:{} | lon:{} | range:{} | n:{}",
                     radarData.getStatusCode(),
                     radarConfig.getLat(), radarConfig.getLon(), radarConfig.getRange(),
-                    Optional.ofNullable(radarData.getBody()).map(AircraftFile::getTotal).orElse(-1));
+                    Optional.ofNullable(radarData.getBody()).map(String::length).orElse(-1));
         } catch (FeignException ex) {
             log.error("HTTP Status: {}\nMessage: {} ", ex.status(), ex.getMessage(), ex);
         }
