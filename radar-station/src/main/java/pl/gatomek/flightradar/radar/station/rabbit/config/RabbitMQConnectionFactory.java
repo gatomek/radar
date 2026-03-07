@@ -2,19 +2,21 @@ package pl.gatomek.flightradar.radar.station.rabbit.config;
 
 import com.rabbitmq.client.ConnectionFactory;
 
+import java.util.Properties;
+
 public class RabbitMQConnectionFactory {
 
     private final ConnectionFactory connectionFactory;
 
-    public RabbitMQConnectionFactory() {
-        ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("113-30-190-16.cloud-xip.com");
-        connectionFactory.setPort(5673);
-        connectionFactory.setUsername("gatomi");
-        connectionFactory.setPassword("Logan@2127.rmq");
-        connectionFactory.setAutomaticRecoveryEnabled(true);
+    public RabbitMQConnectionFactory(Properties props) {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(props.getProperty("rabbit.host"));
+        factory.setPort(Integer.parseInt(props.getProperty("rabbit.port")));
+        factory.setUsername(props.getProperty("rabbit.username"));
+        factory.setPassword(props.getProperty("rabbit.password"));
+        factory.setAutomaticRecoveryEnabled(true);
 
-        this.connectionFactory = connectionFactory;
+        this.connectionFactory = factory;
     }
 
     public ConnectionFactory getConnectionFactory() {

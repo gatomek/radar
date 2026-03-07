@@ -9,14 +9,23 @@ import java.util.concurrent.*;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final int DEFAULT_INTERVAL_SECONDS = 15;
 
     public static void main(String[] args) {
-        int interval = 5;
+        int interval = DEFAULT_INTERVAL_SECONDS;
         if (args.length > 0) {
             String arg0 = args[0];
-            interval = Integer.parseInt(arg0);
+            try {
+                interval = Integer.parseInt(arg0);
+                if( interval < 0) {
+                    interval = DEFAULT_INTERVAL_SECONDS;
+                    LOGGER.warn("Invalid interval: {}. Must be positive. Falling back to defaults: {}s", interval, DEFAULT_INTERVAL_SECONDS);
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.error( "Invalid interval: {}. Falling back to defaults: {}s", arg0, DEFAULT_INTERVAL_SECONDS);
+            }
         }
-        LOGGER.info("Interval: {}", interval);
+        LOGGER.info("Interval: {}s", interval);
 
         RabbitService rabbitService = new RabbitService();
 

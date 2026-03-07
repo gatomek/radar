@@ -1,0 +1,4 @@
+FROM alpine/java:21-jre
+WORKDIR /app
+COPY ./target/radar-station-jar-with-dependencies.jar /app
+ENTRYPOINT ["java","-XX:+UseG1GC","-XX:+UseContainerSupport","-XX:MaxRAM=20m","-XX:MaxRAMPercentage=75","-jar","/app/radar-station-jar-with-dependencies.jar", "warsaw"]
