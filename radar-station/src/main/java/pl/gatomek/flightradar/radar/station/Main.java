@@ -66,6 +66,16 @@ public class Main {
             } finally {
                 clockClientService.close();
                 logPublisherService.close();
+
+                es.shutdown();
+                try {
+                    if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+                        es.shutdownNow();
+                    }
+                } catch (InterruptedException ie) {
+                    es.shutdownNow();
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }

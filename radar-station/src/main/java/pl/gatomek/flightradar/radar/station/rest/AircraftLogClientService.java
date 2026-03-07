@@ -3,7 +3,6 @@ package pl.gatomek.flightradar.radar.station.rest;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.http2.StreamResetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +29,8 @@ public class AircraftLogClientService {
             } else {
                 LOGGER.error("Response error: {}", response.code());
             }
-        } catch (StreamResetException sre) {
-            LOGGER.error("Stream Reset Exception", sre);
+        } catch (NullPointerException npe) {
+            LOGGER.warn("Null Pointer Exception", npe);
         } catch (IOException ioe) {
             LOGGER.error("IO Exception", ioe);
         }

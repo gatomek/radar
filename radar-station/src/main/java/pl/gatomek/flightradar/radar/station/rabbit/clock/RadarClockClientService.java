@@ -8,6 +8,7 @@ import pl.gatomek.flightradar.radar.station.rabbit.config.RabbitMQConnectionFact
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class RadarClockClientService {
@@ -38,8 +39,20 @@ public class RadarClockClientService {
     }
 
     public void close() throws IOException, TimeoutException {
-        channel.close();
-        connection.close();
-        es.close();
+        if (channel != null) {
+            channel.close();
+        }
+        if (connection != null) {
+            connection.close();
+        }
+        es.shutdown();
+        try {
+            if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+                es.shutdownNow();
+            }
+        } catch (InterruptedException ie) {
+            es.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }

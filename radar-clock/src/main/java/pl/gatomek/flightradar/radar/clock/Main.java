@@ -18,8 +18,8 @@ public class Main {
             try {
                 interval = Integer.parseInt(arg0);
                 if( interval < 0) {
-                    interval = DEFAULT_INTERVAL_SECONDS;
                     LOGGER.warn("Invalid interval: {}. Must be positive. Falling back to defaults: {}s", interval, DEFAULT_INTERVAL_SECONDS);
+                    interval = DEFAULT_INTERVAL_SECONDS;
                 }
             } catch (NumberFormatException e) {
                 LOGGER.error( "Invalid interval: {}. Falling back to defaults: {}s", arg0, DEFAULT_INTERVAL_SECONDS);
@@ -29,24 +29,33 @@ public class Main {
 
         RabbitService rabbitService = new RabbitService();
 
+        Runnable tickTask = () -> {
+            try {
+                rabbitService.sendTick();
+            } catch (Exception ex) {
+                LOGGER.error("Tick task failed", ex);
+            }
+        };
+
         try (ScheduledExecutorService scheduler =
                      Executors.newSingleThreadScheduledExecutor(namedThreadFactory("radar-tick"))) {
             try {
                 rabbitService.open();
 
-                Runnable tickTask = () -> {
-                    try {
-                        rabbitService.sendTick();
-                    } catch (Exception ex) {
-                        LOGGER.error("Tick task failed", ex);
-                    }
-                };
-
                 scheduler.scheduleWithFixedDelay(tickTask, interval, interval, TimeUnit.SECONDS);
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownAndAwait(scheduler), "radar-shutdown"));
+
                 awaitForever();
-            } finally {
+
                 rabbitService.close();
+                scheduler.shutdown();
+                if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
+                    scheduler.shutdownNow();
+                }
+            }
+            catch (InterruptedException ie) {
+                scheduler.shutdownNow();
+                Thread.currentThread().interrupt();
             }
         } catch (IOException ex) {
             LOGGER.error("IO Exception", ex);

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.TimeoutException;
 
@@ -29,12 +30,16 @@ public class RabbitService {
 
     public void sendTick() throws IOException {
         String message = String.valueOf(Instant.now().toEpochMilli() / 1000);
-        channel.basicPublish("RADAR_CLOCK", "", null, message.getBytes());
+        channel.basicPublish("RADAR_CLOCK", "", null, message.getBytes(StandardCharsets.UTF_8));
         LOGGER.info("Sent '{}'", message);
     }
 
     public void close() throws IOException, TimeoutException {
-        channel.close();
-        connection.close();
+        if (channel != null) {
+            channel.close();
+        }
+        if (connection != null) {
+            connection.close();
+        }
     }
 }

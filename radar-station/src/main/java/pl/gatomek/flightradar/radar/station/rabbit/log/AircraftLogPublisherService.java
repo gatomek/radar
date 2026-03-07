@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,9 +37,22 @@ public class AircraftLogPublisherService {
     }
 
     public void close() throws IOException, TimeoutException {
-        channel.close();
-        connection.close();
-        es.close();
+        if (channel != null) {
+            channel.close();
+        }
+        if (connection != null) {
+            connection.close();
+        }
+
+        es.shutdown();
+        try {
+            if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+                es.shutdownNow();
+            }
+        } catch (InterruptedException ie) {
+            es.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void publishAircraftLog(String aircraftLog) {
@@ -50,7 +64,7 @@ public class AircraftLogPublisherService {
 
             AMQP.BasicProperties.Builder propsBuilder = new AMQP.BasicProperties.Builder();
             propsBuilder.contentType("application/json");
-            propsBuilder.contentEncoding("zip");
+            propsBuilder.contentEncoding("gzip");
             BasicProperties props = propsBuilder.build();
 
             channel.basicPublish("", QUEUE_NAME, props, os.toByteArray());
