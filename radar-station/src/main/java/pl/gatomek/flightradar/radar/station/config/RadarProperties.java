@@ -1,15 +1,20 @@
 package pl.gatomek.flightradar.radar.station.config;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class RadarProperties extends Properties {
-
+public class RadarProperties {
+    private final Properties props = new Properties();
     private final Map<String, String> values = new HashMap<>();
 
-    @Override
-    public String getProperty(String name) throws UnsupportedOperationException {
+    public void load( InputStream is) throws IOException {
+        props.load(is);
+    }
+
+    public String get(String name) throws UnsupportedOperationException {
         String s = values.get(name);
         if (s != null)
             return s;
@@ -21,7 +26,7 @@ public class RadarProperties extends Properties {
             return ev;
         }
 
-        String pv = super.getProperty(name);
+        String pv = props.getProperty(name);
         if (pv != null) {
             values.put(name, pv);
             return pv;

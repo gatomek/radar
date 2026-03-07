@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.*;
 
 public class Main {
@@ -26,10 +25,10 @@ public class Main {
         String localization = getLocalization(args);
         LOGGER.info("Localization: {}", localization);
 
-        Properties props = loadProperties(localization);
-        String lat = props.getProperty("radar.lat");
-        String lon = props.getProperty("radar.lon");
-        String range = props.getProperty("radar.range");
+        RadarProperties props = loadProperties(localization);
+        String lat = props.get("radar.lat");
+        String lon = props.get("radar.lon");
+        String range = props.get("radar.range");
 
         OkHttpClient httpClient = makeHttpClient();
         String url = MessageFormat.format(URL_PATTERN, lat, lon, range);
@@ -97,7 +96,7 @@ public class Main {
                 .build();
     }
 
-    private static Properties loadProperties(String localization) {
+    private static RadarProperties loadProperties(String localization) {
         RadarProperties props = new RadarProperties();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
