@@ -2,8 +2,11 @@ package pl.gatomek.flightradar.radar.clock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.gatomek.flightradar.radar.clock.config.ClockProperties;
+import pl.gatomek.flightradar.radar.clock.rabbit.RabbitService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.*;
 
 
@@ -17,17 +20,19 @@ public class Main {
             String arg0 = args[0];
             try {
                 interval = Integer.parseInt(arg0);
-                if( interval < 0) {
+                if (interval < 0) {
                     LOGGER.warn("Invalid interval: {}. Must be positive. Falling back to defaults: {}s", interval, DEFAULT_INTERVAL_SECONDS);
                     interval = DEFAULT_INTERVAL_SECONDS;
                 }
             } catch (NumberFormatException e) {
-                LOGGER.error( "Invalid interval: {}. Falling back to defaults: {}s", arg0, DEFAULT_INTERVAL_SECONDS);
+                LOGGER.error("Invalid interval: {}. Falling back to defaults: {}s", arg0, DEFAULT_INTERVAL_SECONDS);
             }
         }
         LOGGER.info("Interval: {}s", interval);
 
-        RabbitService rabbitService = new RabbitService();
+        ClockProperties clockProperties = loadProperties();
+
+        RabbitService rabbitService = new RabbitService(clockProperties);
 
         Runnable tickTask = () -> {
             try {
@@ -52,8 +57,7 @@ public class Main {
                 if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
                     scheduler.shutdownNow();
                 }
-            }
-            catch (InterruptedException ie) {
+            } catch (InterruptedException ie) {
                 scheduler.shutdownNow();
                 Thread.currentThread().interrupt();
             }
@@ -95,5 +99,18 @@ public class Main {
             Thread.currentThread().interrupt();
             LOGGER.info("Main thread interrupted, exiting.");
         }
+    }
+
+    private static ClockProperties loadProperties() {
+        ClockProperties props = new ClockProperties();
+
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try (InputStream in = loader.getResourceAsStream("application.properties")) {
+            props.load(in);
+        } catch (IOException e) {
+            LOGGER.error("Application property file not found");
+        }
+
+        return props;
     }
 }

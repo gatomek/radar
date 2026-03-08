@@ -1,10 +1,11 @@
-package pl.gatomek.flightradar.radar.clock;
+package pl.gatomek.flightradar.radar.clock.rabbit;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.gatomek.flightradar.radar.clock.config.ClockProperties;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,15 +14,21 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitService.class);
+    private final ClockProperties clockProperties;
     private Connection connection;
     private Channel channel;
 
+    public RabbitService(ClockProperties clockProperties) {
+        this.clockProperties = clockProperties;
+    }
+
     public void open() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("113-30-190-16.cloud-xip.com");
-        factory.setPort(5673);
-        factory.setUsername("gatomi");
-        factory.setPassword("Logan@2127.rmq");
+
+        factory.setHost(clockProperties.get("rabbit.host"));
+        factory.setPort(Integer.parseInt(clockProperties.get("rabbit.port")));
+        factory.setUsername(clockProperties.get("rabbit.username"));
+        factory.setPassword(clockProperties.get("rabbit.password"));
 
         connection = factory.newConnection();
         channel = connection.createChannel();
