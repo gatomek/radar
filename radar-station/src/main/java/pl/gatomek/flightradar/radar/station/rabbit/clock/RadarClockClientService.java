@@ -45,6 +45,7 @@ public class RadarClockClientService {
         if (connection != null) {
             connection.close();
         }
+
         es.shutdown();
         try {
             if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
