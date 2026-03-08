@@ -1,0 +1,9 @@
+radar.lat=52.162
+radar.lon=20.960
+radar.range=250
+
+# RabbitMQ connection settings (required).
+rabbit.host=CHANGE_ME_RABBIT_HOST
+rabbit.port=5672
+rabbit.username=CHANGE_ME_RABBIT_USERNAME
+rabbit.password=CHANGE_ME_RABBIT_PASSWORD
