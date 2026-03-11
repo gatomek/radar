@@ -33,6 +33,7 @@ public class Main {
         ClockProperties clockProperties = loadProps();
 
         RabbitService rabbitService = new RabbitService(clockProperties);
+        CountDownLatch shutdownLatch = new CountDownLatch(1);
 
         Runnable tickTask = () -> {
             try {
@@ -48,17 +49,18 @@ public class Main {
                 rabbitService.open();
 
                 scheduler.scheduleWithFixedDelay(tickTask, interval, interval, TimeUnit.SECONDS);
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownAndAwait(scheduler), "radar-shutdown"));
+                Runtime.getRuntime().addShutdownHook(new Thread(
+                        () -> shutdownAll(scheduler, rabbitService, shutdownLatch), "radar-shutdown"));
 
-                awaitForever();
+                shutdownLatch.await();
 
-                rabbitService.close();
-                scheduler.shutdown();
-                if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
-                    scheduler.shutdownNow();
-                }
             } catch (InterruptedException ie) {
                 scheduler.shutdownNow();
+                try {
+                    rabbitService.close();
+                } catch (IOException | TimeoutException e) {
+                    LOGGER.error("Error closing RabbitMQ connection", e);
+                }
                 Thread.currentThread().interrupt();
             }
         } catch (IOException ex) {
@@ -68,7 +70,7 @@ public class Main {
         }
     }
 
-    private static void shutdownAndAwait(ScheduledExecutorService scheduler) {
+    private static void shutdownAll(ScheduledExecutorService scheduler, RabbitService rabbitService, CountDownLatch latch) {
         LOGGER.info("Shutting down scheduler...");
         scheduler.shutdown();
         try {
@@ -80,6 +82,12 @@ public class Main {
             scheduler.shutdownNow();
             Thread.currentThread().interrupt();
         }
+        try {
+            rabbitService.close();
+        } catch (IOException | TimeoutException e) {
+            LOGGER.error("Error closing RabbitMQ connection", e);
+        }
+        latch.countDown();
     }
 
     private static ThreadFactory namedThreadFactory() {
@@ -89,16 +97,6 @@ public class Main {
             t.setDaemon(false);
             return t;
         };
-    }
-
-    private static void awaitForever() {
-        CountDownLatch latch = new CountDownLatch(1);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            LOGGER.info("Main thread interrupted, exiting.");
-        }
     }
 
     private static ClockProperties loadProps() {
