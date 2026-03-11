@@ -15,6 +15,7 @@
     </properties>
 
     <modules>
-        <module>sb</module>
+        <module>radar-clock</module>
+        <module>radar-station</module>
     </modules>
 </project>
