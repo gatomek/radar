@@ -10,7 +10,7 @@ public class ClockProperties {
     private final Properties props = new Properties();
     private final Map<String, String> values = new HashMap<>();
 
-    public void load( InputStream is) throws IOException {
+    public void load(InputStream is) throws IOException {
         props.load(is);
     }
 

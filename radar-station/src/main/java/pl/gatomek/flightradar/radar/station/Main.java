@@ -126,14 +126,15 @@ public class Main {
         RadarProperties props = new RadarProperties();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try (InputStream in = loader.getResourceAsStream(propFileName)) {
-            if (in != null) {
-                props.load(in);
-            } else {
-                throw new IllegalStateException("Application property file '" + propFileName + "' not found on the classpath");
-            }
+        InputStream in = loader.getResourceAsStream(propFileName);
+        if (in == null) {
+            throw new IllegalStateException("Application property file '" + propFileName + "' not found on the classpath");
+        }
+
+        try (InputStream is = in) {
+            props.load(is);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to load application property file '" + localization + "'", e);
+            throw new IllegalStateException("Failed to load application property file '" + propFileName + "'", e);
         }
 
         return props;

@@ -30,7 +30,7 @@ public class Main {
         }
         LOGGER.info("Interval: {}s", interval);
 
-        ClockProperties clockProperties = loadProperties();
+        ClockProperties clockProperties = loadProps();
 
         RabbitService rabbitService = new RabbitService(clockProperties);
 
@@ -43,7 +43,7 @@ public class Main {
         };
 
         try (ScheduledExecutorService scheduler =
-                     Executors.newSingleThreadScheduledExecutor(namedThreadFactory("radar-tick"))) {
+                     Executors.newSingleThreadScheduledExecutor(namedThreadFactory())) {
             try {
                 rabbitService.open();
 
@@ -82,10 +82,10 @@ public class Main {
         }
     }
 
-    private static ThreadFactory namedThreadFactory(String baseName) {
+    private static ThreadFactory namedThreadFactory() {
         return r -> {
             Thread t = new Thread(r);
-            t.setName(baseName);
+            t.setName("radar-tick");
             t.setDaemon(false);
             return t;
         };
@@ -101,12 +101,17 @@ public class Main {
         }
     }
 
-    private static ClockProperties loadProperties() {
+    private static ClockProperties loadProps() {
         ClockProperties props = new ClockProperties();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try (InputStream in = loader.getResourceAsStream("application.properties")) {
-            props.load(in);
+        InputStream in = loader.getResourceAsStream("application.properties");
+        if (in == null) {
+            throw new IllegalStateException("Application property file 'application.properties' not found on the classpath");
+        }
+
+        try (InputStream is = in) {
+            props.load(is);
         } catch (IOException e) {
             LOGGER.error("Application property file not found");
         }
