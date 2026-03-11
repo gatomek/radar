@@ -30,9 +30,10 @@ public class Main {
         }
         LOGGER.info("Interval: {}s", interval);
 
-        ClockProperties clockProperties = loadProps();
+        ClockProperties clockProperties = loadClockProps();
 
         RabbitService rabbitService = new RabbitService(clockProperties);
+        CountDownLatch shutdownLatch = new CountDownLatch(1);
 
         Runnable tickTask = () -> {
             try {
@@ -48,17 +49,17 @@ public class Main {
                 rabbitService.open();
 
                 scheduler.scheduleWithFixedDelay(tickTask, interval, interval, TimeUnit.SECONDS);
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownAndAwait(scheduler), "radar-shutdown"));
 
-                awaitForever();
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownAll(scheduler, rabbitService, shutdownLatch), "radar-shutdown"));
 
-                rabbitService.close();
-                scheduler.shutdown();
-                if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
-                    scheduler.shutdownNow();
-                }
+                shutdownLatch.await();
             } catch (InterruptedException ie) {
                 scheduler.shutdownNow();
+                try {
+                    rabbitService.close();
+                } catch (IOException | TimeoutException e) {
+                    LOGGER.error("Error closing RabbitMQ connection", e);
+                }
                 Thread.currentThread().interrupt();
             }
         } catch (IOException ex) {
@@ -68,11 +69,10 @@ public class Main {
         }
     }
 
-    private static void shutdownAndAwait(ScheduledExecutorService scheduler) {
-        LOGGER.info("Shutting down scheduler...");
+    private static void shutdownAll(ScheduledExecutorService scheduler, RabbitService rabbitService, CountDownLatch latch) {
         scheduler.shutdown();
         try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+            if (!scheduler.awaitTermination(15, TimeUnit.SECONDS)) {
                 LOGGER.warn("Forcing scheduler shutdown...");
                 scheduler.shutdownNow();
             }
@@ -80,6 +80,14 @@ public class Main {
             scheduler.shutdownNow();
             Thread.currentThread().interrupt();
         }
+
+        try {
+            rabbitService.close();
+        } catch (IOException | TimeoutException e) {
+            LOGGER.error("Error closing RabbitMQ connection", e);
+        }
+
+        latch.countDown();
     }
 
     private static ThreadFactory namedThreadFactory() {
@@ -91,31 +99,20 @@ public class Main {
         };
     }
 
-    private static void awaitForever() {
-        CountDownLatch latch = new CountDownLatch(1);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            LOGGER.info("Main thread interrupted, exiting.");
-        }
-    }
-
-    private static ClockProperties loadProps() {
-        ClockProperties props = new ClockProperties();
-
+    private static ClockProperties loadClockProps() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream in = loader.getResourceAsStream("application.properties");
         if (in == null) {
-            throw new IllegalStateException("Application property file 'application.properties' not found on the classpath");
+            throw new IllegalStateException("Application property file not found on the classpath");
         }
 
+        ClockProperties clockProps = new ClockProperties();
         try (InputStream is = in) {
-            props.load(is);
+            clockProps.load(is);
         } catch (IOException e) {
-            LOGGER.error("Application property file not found");
+            LOGGER.error("Failed to load application property file");
         }
 
-        return props;
+        return clockProps;
     }
 }

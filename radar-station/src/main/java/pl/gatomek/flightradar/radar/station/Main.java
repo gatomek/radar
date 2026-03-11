@@ -123,21 +123,20 @@ public class Main {
 
     private static RadarProperties loadProps(String localization) {
         String propFileName = "application-" + localization + ".properties";
-        RadarProperties props = new RadarProperties();
-
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream in = loader.getResourceAsStream(propFileName);
         if (in == null) {
             throw new IllegalStateException("Application property file '" + propFileName + "' not found on the classpath");
         }
 
+        RadarProperties radarProps = new RadarProperties();
         try (InputStream is = in) {
-            props.load(is);
+            radarProps.load(is);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load application property file '" + propFileName + "'", e);
         }
 
-        return props;
+        return radarProps;
     }
 
     private static String getLocalization(String[] args) {
@@ -145,6 +144,6 @@ public class Main {
             return args[0];
         }
 
-        throw new UnsupportedOperationException("Localization is not available");
+        throw new UnsupportedOperationException("Localization is not given");
     }
 }

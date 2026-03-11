@@ -16,8 +16,7 @@ public class ClockProperties {
 
     public String get(String name) throws UnsupportedOperationException {
         String s = values.get(name);
-        if (s != null)
-            return s;
+        if (s != null) return s;
 
         String key = name.replace(".", "_");
         String ev = System.getenv(key);
