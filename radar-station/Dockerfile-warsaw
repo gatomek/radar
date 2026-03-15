@@ -1,4 +1,4 @@
 FROM eclipse-temurin:21-jre-ubi10-minimal
 WORKDIR /app
 COPY ./target/radar-station-jar-with-dependencies.jar /app
-ENTRYPOINT ["java","-XX:+UseSerialGC","-XX:NewSize=4m","-XX:+UseCompressedOops","-XX:MaxNewSize=4m","-XX:+UseContainerSupport","-XX:MaxMetaspaceSize=15m","-Xmx20m","-XX:MaxRAM=30m","-XX:MaxRAMPercentage=50","-jar","/app/radar-station-jar-with-dependencies.jar","warsaw"]
+ENTRYPOINT ["java","-XX:+UseSerialGC","-XX:NewSize=4m","-XX:+UseCompressedOops","-XX:MaxNewSize=4m","-XX:+UseContainerSupport","-XX:MaxMetaspaceSize=15m","-Xmx20m","-XX:MaxRAM=30m","-jar","/app/radar-station-jar-with-dependencies.jar","warsaw"]

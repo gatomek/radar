@@ -8,7 +8,7 @@ import pl.gatomek.flightradar.radar.station.config.RadarProperties;
 import pl.gatomek.flightradar.radar.station.rabbit.clock.RadarClockClientService;
 import pl.gatomek.flightradar.radar.station.rabbit.config.RabbitMQConnectionFactory;
 import pl.gatomek.flightradar.radar.station.rabbit.log.AircraftLogPublisherService;
-import pl.gatomek.flightradar.radar.station.rest.AircraftLogClientService;
+import pl.gatomek.flightradar.radar.station.rest.client.AircraftLogClientService;
 
 import java.io.IOException;
 import java.io.InputStream;

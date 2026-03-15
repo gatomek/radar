@@ -1,4 +1,4 @@
-package pl.gatomek.flightradar.radar.station.rest;
+package pl.gatomek.flightradar.radar.station.rest.client;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
