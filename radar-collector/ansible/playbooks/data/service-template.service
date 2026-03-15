@@ -1,0 +1,16 @@
+[Unit]
+Description={{app_name}}
+After=syslog.target
+
+[Service]
+User={{app_name}}
+ExecStart=/usr/bin/java -jar /home/{{app_name}}/app/{{app_name}}-{{app_version}}.jar --spring.profiles.active=kamatera
+WorkingDirectory=/home/{{app_name}}/app
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier={{app_name}}
+SuccessExitStatus=143
+EnvironmentFile=/home/{{app_name}}/app/prod.env
+
+[Install]
+WantedBy=multi-user.target

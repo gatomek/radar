@@ -1,0 +1,9 @@
+### GET request to localhost
+GET http://127.0.0.1:8080/logs
+
+###
+
+### GET request to localhost
+GET http://localhost:8080/logs
+
+###

@@ -17,5 +17,6 @@
     <modules>
         <module>radar-clock</module>
         <module>radar-station</module>
+        <module>radar-collector</module>
     </modules>
 </project>
