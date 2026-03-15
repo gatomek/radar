@@ -19,7 +19,7 @@ import java.util.zip.GZIPInputStream;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class RadarDataListener {
+public class RadarNotificationListener {
     private final ObjectMapper objectMapper;
     private final NotificationPort notificationPort;
 

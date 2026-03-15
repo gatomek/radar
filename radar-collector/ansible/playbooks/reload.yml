@@ -9,5 +9,6 @@
   tasks:
     - name: "Reload service {{app_name}}"
       systemd:
-        state: started
+        daemon_reload: yes
+        state: restarted
         name: "{{app_name}}"

@@ -14,7 +14,7 @@ public class MaintenanceTask {
     private final MaintenancePort maintenancePort;
 
     @Scheduled(fixedDelay = 15, timeUnit = TimeUnit.SECONDS)
-    public void projectView() {
+    public void runMaintenance() {
         maintenancePort.maintain();
     }
 }
