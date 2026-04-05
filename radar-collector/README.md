@@ -11,5 +11,5 @@
 
 # Analyzing journal
 ```
-journalctl -u radar-collector.service --since=2026-04-04
+journalctl -u radar-collector.service --since="1 hour ago"
 ```
