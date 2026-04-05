@@ -45,12 +45,10 @@ public class RadarNotificationListener {
     }
 
     private AircraftNotification fromGZip(byte[] bytes) throws IOException {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
-            try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
-                try (InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8)) {
-                    return objectMapper.readValue(inputStreamReader, AircraftNotification.class);
-                }
-            }
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+             GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream);
+             InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8)) {
+            return objectMapper.readValue(inputStreamReader, AircraftNotification.class);
         }
     }
 }
