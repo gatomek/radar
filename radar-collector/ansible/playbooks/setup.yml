@@ -46,11 +46,11 @@
 
     - name: Create keystore PKCS#12 file
       community.crypto.openssl_pkcs12:
-       path: "/home/{{app_name}}/app/keystore.p12"
-       privatekey_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/privkey.pem
-       certificate_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/fullchain.pem
-       friendly_name: "{{app_name}}"
-       passphrase: "{{keystore_password}}"
+        path: "/home/{{app_name}}/app/keystore.p12"
+        privatekey_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/privkey.pem
+        certificate_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/fullchain.pem
+        friendly_name: "{{app_name}}"
+        passphrase: "{{keystore_password}}"
 
     - name: Setting owner and group of keystore PKCS#12 file
       file:
