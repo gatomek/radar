@@ -1,7 +1,10 @@
 # Ansible
 
 ## Version
-2.17.14
+Ansible 2.17.14
+
+## Collections requirements
+* community.crypto.openssl_pkcs12
 
 ## Ansible commands
 
