@@ -57,6 +57,7 @@
         path: "/home/{{app_name}}/app/keystore.p12"
         owner: "{{app_name}}"
         group: "{{app_name}}"
+        mode: '0600'
 
     - name: Reload systemd
       systemd:
