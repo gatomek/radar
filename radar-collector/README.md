@@ -7,3 +7,9 @@
 * https://jenkov.com/tutorials/java-concurrency/read-write-locks.html
 * https://www.baeldung.com/java-concurrent-locks
 * https://nurkiewicz.com/2014/03/simplifying-readwritelock-with-java-8.html
+* https://towardsdev.com/spring-boot-tls-ssl-setup-made-simple-a-step-by-step-guide-a0c99cca5ccd
+
+# Analyzing journal
+```
+journalctl -u radar-collector.service --since=2026-04-04
+```

@@ -14,6 +14,7 @@
         create_home: yes
         password: "{{user_password | password_hash('sha512') }}"
         state: present
+
     - name: "Create folder app in {{app_name}} home folder"
       file:
         path: "/home/{{app_name}}/app"
@@ -21,27 +22,46 @@
         owner: "{{app_name}}"
         group: "{{app_name}}"
         mode: '0700'
+
     - name: Copy application to app folder
       copy:
         src: "../../target/{{app_name}}-{{app_version}}.jar"
         dest: "/home/{{app_name}}/app/{{app_name}}-{{app_version}}.jar"
         owner: "{{app_name}}"
         group: "{{app_name}}"
+
     - name: Copy prod.env to app folder
       copy:
         src: ../../env/prod.env
         dest: "/home/{{app_name}}/app/"
         owner: "{{app_name}}"
         group: "{{app_name}}"
-    - name: "Copy systemd service-template.service config file to /etc/systemd/system folder"
+
+    - name: "Render systemd service-template.service config file to /etc/systemd/system folder"
       template:
         src: data/service-template.service
         dest: "/etc/systemd/system/{{app_name}}.service"
         owner: root
         group: root
+
+    - name: Create keystore PKCS#12 file
+      community.crypto.openssl_pkcs12:
+       path: "/home/{{app_name}}/app/keystore.p12"
+       privatekey_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/privkey.pem
+       certificate_path: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/fullchain.pem
+       friendly_name: "{{app_name}}"
+       passphrase: "{{keystore_password}}"
+
+    - name: Setting owner and group of keystore PKCS#12 file
+      file:
+        path: "/home/{{app_name}}/app/keystore.p12"
+        owner: "{{app_name}}"
+        group: "{{app_name}}"
+
     - name: Reload systemd
       systemd:
         daemon_reload: yes
+
     - name: "Restart service {{app_name}}"
       systemd:
         state: restarted
