@@ -11,6 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -65,6 +66,22 @@ public class AircraftLog implements Serializable {
 
     @JsonProperty("messages")
     private Integer messages;
+
+    @JsonProperty("mag_heading")
+    private BigDecimal magneticHeading;
+
+    @JsonProperty("true_heading")
+    private BigDecimal trueHeading;
+
+    @JsonProperty("nav_modes")
+    private List<String> navModes;
+
+    @JsonProperty("squawk")
+    private String squawk;
+
+    @JsonProperty("gs")
+    private String groundSpeed;
+
 
     public void setFlight(String flight) {
         this.flight = Optional.ofNullable(flight).map(String::trim).orElse(null);
