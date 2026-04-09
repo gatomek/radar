@@ -8,6 +8,10 @@
 * https://www.baeldung.com/java-concurrent-locks
 * https://nurkiewicz.com/2014/03/simplifying-readwritelock-with-java-8.html
 * https://towardsdev.com/spring-boot-tls-ssl-setup-made-simple-a-step-by-step-guide-a0c99cca5ccd
+* https://www.baeldung.com/spring-boot-actuators
+* https://www.baeldung.com/spring-boot-health-indicators
+* https://docs.spring.io/spring-boot/api/rest/actuator/index.html
+* https://www.baeldung.com/spring-boot-prometheus
 
 # Analyzing journal
 ```
