@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class RadarProperties {
+public class BaseProperties {
     private final Properties props = new Properties();
     private final Map<String, String> values = HashMap.newHashMap(7);
 
@@ -14,40 +14,7 @@ public class RadarProperties {
         props.load(is);
     }
 
-    public String getRabbitHost() {
-        return get("rabbit.host");
-    }
-
-    public int getRabbitPort() {
-        String port = get("rabbit.port");
-        try {
-            return Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("RabbitMQ configuration error: 'rabbit.port' must be a valid integer, but was: '" + port + "'", e);
-        }
-    }
-
-    public String getRabbitUsername() {
-        return get("rabbit.username");
-    }
-
-    public String getRabbitPassword() {
-        return get("rabbit.password");
-    }
-
-    public String getRadarLat() {
-        return get("radar.lat");
-    }
-
-    public String getRadarLon() {
-        return get("radar.lon");
-    }
-
-    public String getRadarRange() {
-        return get("radar.range");
-    }
-
-    private String get(String name) throws UnsupportedOperationException {
+    public String get(String name) throws UnsupportedOperationException {
         String s = values.get(name);
         if (s != null) return s;
 
@@ -74,4 +41,5 @@ public class RadarProperties {
 
         return props.getProperty(name);
     }
+
 }

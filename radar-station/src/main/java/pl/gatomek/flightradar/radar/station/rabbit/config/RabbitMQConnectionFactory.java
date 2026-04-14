@@ -1,13 +1,13 @@
 package pl.gatomek.flightradar.radar.station.rabbit.config;
 
 import com.rabbitmq.client.ConnectionFactory;
-import pl.gatomek.flightradar.radar.station.config.RadarProperties;
+import pl.gatomek.flightradar.radar.station.config.RabbitProperties;
 
 public class RabbitMQConnectionFactory {
 
     private final ConnectionFactory connectionFactory;
 
-    public RabbitMQConnectionFactory(RadarProperties props) {
+    public RabbitMQConnectionFactory(RabbitProperties props) {
         ConnectionFactory factory = new ConnectionFactory();
 
         factory.setHost(props.getRabbitHost());
