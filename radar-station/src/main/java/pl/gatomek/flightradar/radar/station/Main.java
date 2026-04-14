@@ -4,7 +4,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.gatomek.flightradar.radar.station.config.RadarProperties;
+import pl.gatomek.flightradar.radar.station.config.LocalizationProperties;
+import pl.gatomek.flightradar.radar.station.config.RabbitProperties;
 import pl.gatomek.flightradar.radar.station.rabbit.clock.RadarClockClientService;
 import pl.gatomek.flightradar.radar.station.rabbit.config.RabbitMQConnectionFactory;
 import pl.gatomek.flightradar.radar.station.rabbit.log.AircraftLogPublisherService;
@@ -22,18 +23,17 @@ public class Main {
     private static final String URL_PATTERN = "https://api.airplanes.live/v2/point/{0}/{1}/{2}";
 
     public static void main(String[] args) {
-        String localization = getLocalization(args);
+        String localization = getLocalizationFromArguments(args);
         LOGGER.info("Localization: {}", localization);
+        LocalizationProperties localizationProps = loadLocalizationProps(localization);
 
-        RadarProperties props = loadProps(localization);
-
-        String url = resolveUrl(props);
+        String url = resolveUrl(localizationProps);
         LOGGER.info("URL: {}", url);
-
         OkHttpClient httpClient = makeHttpClient();
-
         AircraftLogClientService logClientService = new AircraftLogClientService(httpClient, url);
-        RabbitMQConnectionFactory rabbitMQConnectionFactory = new RabbitMQConnectionFactory(props);
+
+        RabbitProperties rabbitProps = loadRabbitProps();
+        RabbitMQConnectionFactory rabbitMQConnectionFactory = new RabbitMQConnectionFactory(rabbitProps);
         AircraftLogPublisherService logPublisherService = new AircraftLogPublisherService(rabbitMQConnectionFactory);
 
         try (ExecutorService es = Executors.newSingleThreadExecutor()) {
@@ -96,7 +96,7 @@ public class Main {
         }
     }
 
-    private static String resolveUrl(RadarProperties props) {
+    private static String resolveUrl(LocalizationProperties props) {
         String lat = props.getRadarLat();
         String lon = props.getRadarLon();
         String range = props.getRadarRange();
@@ -121,7 +121,7 @@ public class Main {
                 .build();
     }
 
-    private static RadarProperties loadProps(String localization) {
+    private static LocalizationProperties loadLocalizationProps(String localization) {
         String propFileName = "application-" + localization + ".properties";
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream in = loader.getResourceAsStream(propFileName);
@@ -129,7 +129,7 @@ public class Main {
             throw new IllegalStateException("Application property file '" + propFileName + "' not found on the classpath");
         }
 
-        RadarProperties radarProps = new RadarProperties();
+        LocalizationProperties radarProps = new LocalizationProperties();
         try (InputStream is = in) {
             radarProps.load(is);
         } catch (IOException e) {
@@ -139,7 +139,25 @@ public class Main {
         return radarProps;
     }
 
-    private static String getLocalization(String[] args) {
+    private static RabbitProperties loadRabbitProps() {
+        String propFileName = "application.properties";
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        InputStream in = loader.getResourceAsStream(propFileName);
+        if (in == null) {
+            throw new IllegalStateException("Application property file '" + propFileName + "' not found on the classpath");
+        }
+
+        RabbitProperties rabbitProps = new RabbitProperties();
+        try (InputStream is = in) {
+            rabbitProps.load(is);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load application property file '" + propFileName + "'", e);
+        }
+
+        return rabbitProps;
+    }
+
+    private static String getLocalizationFromArguments(String[] args) {
         if (args.length > 0) {
             return args[0];
         }

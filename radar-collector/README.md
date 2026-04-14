@@ -12,6 +12,8 @@
 * https://www.baeldung.com/spring-boot-health-indicators
 * https://docs.spring.io/spring-boot/api/rest/actuator/index.html
 * https://www.baeldung.com/spring-boot-prometheus
+* https://www.youtube.com/watch?v=NtPpeK0h_pI
+* https://www.cherryservers.com/blog/install-prometheus-ubuntu
 
 # Analyzing journal
 ```
