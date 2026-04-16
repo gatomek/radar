@@ -1,0 +1,15 @@
+[Unit]
+Description={{app_name}}
+After=syslog.target
+
+[Service]
+User={{app_name}}
+ExecStart=/usr/bin/java -jar /usr/local/{{app_name}}/{{app_name}}.jar {{radar_location}}
+WorkingDirectory=/usr/local/{{app_name}}
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier={{app_name}}
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
