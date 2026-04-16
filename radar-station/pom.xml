@@ -11,6 +11,7 @@
 
     <artifactId>radar-station</artifactId>
     <packaging>jar</packaging>
+    <name>radar-station</name>
 
     <dependencyManagement>
         <dependencies>
@@ -73,6 +74,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>radar-station</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
         </plugins>
