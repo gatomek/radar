@@ -39,7 +39,7 @@
       systemd:
         daemon_reload: yes
 
-    - name: "Start service {{app_name}}"
+    - name: "Restart service {{app_name}}"
       systemd:
         name: "{{app_name}}"
         state: restarted
