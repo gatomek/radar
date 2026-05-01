@@ -118,6 +118,9 @@ public class Main {
                 .protocols(List.of(Protocol.HTTP_1_1))
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
+                .followRedirects(false)
+                .followSslRedirects(false)
                 .build();
     }
 
