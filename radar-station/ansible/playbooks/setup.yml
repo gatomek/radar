@@ -1,8 +1,6 @@
-- name: "Set up service {{app_name}} on kamatera"
-  vars_files:
-    - vars/prod.yml
+- name: Setup service radar-station
   gather_facts: no
-  hosts: kamatera
+  hosts: servers
   remote_user: "{{remote_admin}}"
   become: true
   become_method: sudo
