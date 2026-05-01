@@ -10,6 +10,7 @@ StandardOutput=journal
 StandardError=journal
 SyslogIdentifier={{app_name}}
 SuccessExitStatus=143
+EnvironmentFile=/usr/local/{{app_name}}/prod.env
 
 [Install]
 WantedBy=multi-user.target

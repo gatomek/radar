@@ -4,6 +4,6 @@
 #   vars:
 #     app_name:
 #     user_password:
-#     remote_admin:
+#     remote_user:
 #     ansible_become_pass:
 #     radar_location:

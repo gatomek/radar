@@ -1,7 +1,7 @@
 - name: Restart service radar-station
   gather_facts: no
   hosts: servers
-  remote_user: "{{remote_admin}}"
+  remote_user: "{{remote_user}}"
   become: true
   become_method: sudo
   tasks:

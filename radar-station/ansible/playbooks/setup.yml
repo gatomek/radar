@@ -1,7 +1,7 @@
 - name: Setup service radar-station
   gather_facts: no
   hosts: servers
-  remote_user: "{{remote_admin}}"
+  remote_user: "{{remote_user}}"
   become: true
   become_method: sudo
   tasks:
@@ -25,6 +25,13 @@
       copy:
         src: "../../target/{{app_name}}.jar"
         dest: "/usr/local/{{app_name}}/{{app_name}}.jar"
+        owner: "{{app_name}}"
+        group: "{{app_name}}"
+
+    - name: Copy prod.env to app folder
+      copy:
+        src: ./data/prod.env
+        dest: "/usr/local/{{app_name}}/"
         owner: "{{app_name}}"
         group: "{{app_name}}"
 
