@@ -1,4 +1,4 @@
-- name: "Start service radar-station"
+- name: Start service radar-station
   gather_facts: no
   hosts: servers
   remote_user: "{{remote_admin}}"

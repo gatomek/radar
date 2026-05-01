@@ -11,5 +11,5 @@ ansible-playbook -i inventory/tower playbooks/setup.yml -k
 ```
 
 # Configuration
-- `/usr/local/radar-station` - folder for binaries, working directory
-- `/etc/radar-station` - configuration like envs.file, certs, keys
+- `/usr/local/{{ app_name }}` - folder for binaries, working directory
+- `/etc/{{ app_name }}` - configuration like envs.file, certs, keys
