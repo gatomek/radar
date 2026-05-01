@@ -33,7 +33,7 @@ public class BaseProperties {
     }
 
     private String getCore(String name) throws UnsupportedOperationException {
-        String key = name.replace(".", "_");
+        String key = name.replace(".", "_").toUpperCase();
         String ev = System.getenv(key);
         if (ev != null) {
             return ev;
