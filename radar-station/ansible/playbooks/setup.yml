@@ -1,7 +1,7 @@
 - name: Setup service radar-station
   gather_facts: no
   hosts: servers
-  remote_user: "{{ remote_user }}"
+  remote_user: "{{ remote_usr }}"
   become: true
   become_method: sudo
   tasks:
