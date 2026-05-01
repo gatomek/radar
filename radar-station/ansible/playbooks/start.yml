@@ -1,11 +1,11 @@
 - name: Start service radar-station
   gather_facts: no
   hosts: servers
-  remote_user: "{{remote_user}}"
+  remote_user: "{{ remote_user }}"
   become: true
   become_method: sudo
   tasks:
-    - name: "Start service {{app_name}}"
+    - name: "Start service {{ app_name }}"
       systemd:
         state: started
-        name: "{{app_name}}"
+        name: "{{ app_name }}"
