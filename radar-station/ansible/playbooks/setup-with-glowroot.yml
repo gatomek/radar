@@ -49,21 +49,23 @@
         owner: "{{ app_name }}"
         group: "{{ app_name }}"
 
-    - name: Copy ssl certificate for glowroot
+    - name: "Copy ssl certificate for glowroot to /usr/local/{{ app_name }}/ui-cert.pem"
       copy:
         remote_src: true
         src: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/fullchain.pem
         dest: "/usr/local/{{ app_name }}/ui-cert.pem"
         owner: "{{ app_name }}"
         group: "{{ app_name }}"
+        mode: 0600
 
-    - name: Copy ssl private key for glowroot
+    - name: "Copy ssl private key for glowroot to /usr/local/{{ app_name }}/ui-key.pem"
       copy:
         remote_src: true
         src: /etc/letsencrypt/live/113-30-190-16.cloud-xip.com/privkey.pem
         dest: "/usr/local/{{ app_name }}/ui-key.pem"
         owner: "{{ app_name }}"
         group: "{{ app_name }}"
+        mode: 0600
 
     - name: Reload systemd
       systemd:
